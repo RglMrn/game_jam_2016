@@ -236,11 +236,11 @@ Crafty.c('VehicleSelection', {
 
     this.title.textColor("#FFFFFF")
     this.title.textFont({
-      size: '20px',
+      family: 'Architects Daughter'
+      size: '35px',
       weight: 'bold'
     })
     this.title.y = this.y + 10
-
 
     # Options
     this.diabloRojoOption.vehicleSelectionContainer = this
@@ -283,7 +283,7 @@ Crafty.c('VehicleSelection', {
     return this
 
   setLaneNumber: (laneNumber) ->
-    this.title.text('¡ELIGE TU TRANSPORTE PARA EL CARRIL ' + laneNumber + '!')
+    this.title.text('¡ ELIGE TU TRANSPORTE PARA EL CARRIL ' + laneNumber + ' !')
     this.title.x = this.x + this.w / 2 - this.title.w / 2
     return this
 })
