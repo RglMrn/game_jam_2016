@@ -49,9 +49,7 @@ defineCraftyScenes = ->
   )
 
 startAllVehicles = ->
-  Crafty('Vehicle').each( ->
-    this.trigger('StartRunning');
-  )
+  Crafty('Vehicle').trigger('StartRunning')
 
 Crafty.c('Lane', {
   init: ->
