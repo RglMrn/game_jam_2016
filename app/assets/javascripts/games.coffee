@@ -30,12 +30,15 @@ defineCraftyScenes = ->
 
     Crafty.e('Lane')
     .setX(leftMargin)
+    .setOrder(1)
 
     Crafty.e('Lane')
     .setX(leftMargin + (crStage.width() * .33))
+    .setOrder(2)
 
     Crafty.e('Lane')
     .setX(leftMargin + (crStage.width() * .66))
+    .setOrder(3)
   )
 
 
@@ -50,9 +53,13 @@ Crafty.c('Lane', {
 
   events: {
     'Click': (MouseEvent) ->
+      vehicleType = switch
+        when this.order == 1 then 'Uber'
+        when this.order == 2 then 'Metrobus'
+        when this.order == 3 then 'DiabloRojo'
       Crafty.e('Vehicle')
-      .place(this.x, this.y)
-      .setType('Uber')
+      .setType(vehicleType)
+      .place( this.x + (this.w / 2), this.y)
   }
 
   remove: ->
@@ -61,13 +68,15 @@ Crafty.c('Lane', {
   setX: (x) ->
     this.x = x
     return this
+
+  setOrder: (order) ->
+    this.order = order
+    return this
 })
 
 Crafty.c('Vehicle', {
   init: ->
     this.addComponent("2D, Canvas, Color")
-    this.w = 30
-    this.h = 30
     this.color(colorBrown)
 
   events: {
@@ -77,7 +86,7 @@ Crafty.c('Vehicle', {
     Crafty.log('Vehicle was removed')
 
   place: (x, y) ->
-    this.x = x
+    this.x = x - (this.w / 2)
     this.y = y
     return this
 
@@ -90,10 +99,16 @@ Crafty.c('Vehicle', {
 
   setUberAttributes: ->
     this.color(colorBlack)
+    this.w = 30
+    this.h = 50
 
   setMetrobusAttributes: ->
     this.color(colorGray)
+    this.w = 35
+    this.h = 65
 
   setDiabloRojoAttributes: ->
     this.color(colorRed)
+    this.w = 35
+    this.h = 60
 })
