@@ -39,8 +39,19 @@ defineCraftyScenes = ->
     Crafty.e('Lane')
     .setX(leftMargin + (crStage.width() * .66))
     .setOrder(3)
+
+    Crafty.e('2D, DOM, Color, Button')
+    .attr({x: 10, y: 10, w: 50, h: 50})
+    .color(colorLightBlue)
+    .bind('Click', (MouseEvent) ->
+      startAllVehicles()
+    )
   )
 
+startAllVehicles = ->
+  Crafty('Vehicle').each( ->
+    this.trigger('StartRunning');
+  )
 
 Crafty.c('Lane', {
   init: ->
@@ -85,13 +96,15 @@ Crafty.c('Vehicle', {
     this.speedCap = 500
 
   events: {
-    'EnterFrame': (eventData) ->
-      if this.y < Crafty('Lane').get(1).h / 2
-        this.destroy()
-      else
-        this.y -= this.speedIncrement * (eventData.dt / 1000);
-        if this.speedIncrement < this.speedCap
-          this.speedIncrement += this.speedIncrement
+    'StartRunning': ->
+      this.bind('EnterFrame', (eventData) ->
+        if this.y < Crafty('Lane').get(1).h / 2
+          this.destroy()
+        else
+          this.y -= this.speedIncrement * (eventData.dt / 1000);
+          if this.speedIncrement < this.speedCap
+            this.speedIncrement += this.speedIncrement
+      )
   }
 
   remove: ->
