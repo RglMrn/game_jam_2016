@@ -82,6 +82,7 @@ disableAddingVehicles = ->
     if !this.has('LaneReady')
       this.addComponent('LaneReady')
   )
+  Crafty('VehicleSelection').destroy()
 
 startAllVehicles = ->
   Crafty('Vehicle').trigger('StartRunning')
