@@ -170,18 +170,18 @@ Crafty.c('Vehicle', {
 
   setUberAttributes: ->
     this.addComponent("car_white_up_start")
-    this.w = 120
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.425 #120
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
-    this.w = 90
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.33 #90
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
-    this.w = 90
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.33 #90
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 })
 
 Crafty.c('EnemyVehicle', {
@@ -221,18 +221,18 @@ Crafty.c('EnemyVehicle', {
 
   setUberAttributes: ->
     this.addComponent("car_white_up_start")
-    this.w = 120
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.425 #120
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
-    this.w = 90
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.33 #90
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
-    this.w = 90
-    this.h = 200
+    this.w = Crafty('Lane').get(0).w * 0.33 #90
+    this.h = Crafty('Lane').get(0).w * 0.8 #200
 })
 
 Crafty.c('Countdown', {
