@@ -1,0 +1,30 @@
+// * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+// NOTES
+// Bootstrap variables that can be used or modified: http://getbootstrap.com/customize/#less-variables
+// * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
+
+$color-gray-1:  #686868;
+$color-gray-2:  #666;
+$color-gray-3:  #222;
+$color-gray-4: #404040;
+$color-gray-5: #9d9d9d;
+$color-gray-6: #eaeaea;
+$color-logo-blue: #272973;
+$color-logo-yellow: #E7CA1D;
+
+$color-footer-bg: #fff;
+$color-footer-text: $color-gray-4;
+$color-menu-link-text: $color-gray-1;
+$color-menu-link-text-hover: $color-gray-4;
+$color-menu-dark-link-text: $color-gray-5;
+$color-menu-dark-link-text-hover: #fff;
+$color-notification-count-bg: #d64e07;
+$color-notification-count-font: #fff;
+$color-sidebar-background: #f5f5f5;
+$color-sidebar-border: #eee;
+
+$form-max-width: 50%;
+$top-bar-height: 50px;
+
+$web-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$web-font-path: "https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" !default;
