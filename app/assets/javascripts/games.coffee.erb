@@ -148,7 +148,11 @@ Crafty.c('Vehicle', {
     this.addComponent("2D, Canvas, Collision")
     this.speedIncrement = SPEED_INCREMENT
     this.speedCap = SPEED_CAP
-    this.checkHits('EnemyVehicle')
+    this.onHit('EnemyVehicle', (obj) ->
+      this.destroy()
+      enemyVehicle = Crafty(obj[0].obj.getId())
+      enemyVehicle.destroy()
+    )
 
   events: {
     'StartRunning': ->
@@ -157,10 +161,6 @@ Crafty.c('Vehicle', {
         if this.speedIncrement < this.speedCap
           this.speedIncrement += this.speedIncrement
       )
-
-    'HitOn': (hitData) ->
-      Crafty.log("Collision with EnemyVehicle:");
-      Crafty.log(hitData);
   }
 
   remove: ->
