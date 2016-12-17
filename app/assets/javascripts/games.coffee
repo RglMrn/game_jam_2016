@@ -79,8 +79,14 @@ Crafty.c('Vehicle', {
   init: ->
     this.addComponent("2D, Canvas, Color")
     this.color(colorBrown)
+    this.speedIncrement = 50
+    this.speedCap = 500
 
   events: {
+    'EnterFrame': (eventData) ->
+      this.y -= this.speedIncrement * (eventData.dt / 1000);
+      if this.speedIncrement < this.speedCap
+        this.speedIncrement += this.speedIncrement
   }
 
   remove: ->
