@@ -74,7 +74,7 @@ defineCraftyScenes = ->
     .setX(leftMargin + (crStage.width() * .66))
     .setOrder(3)
 
-    Crafty.e('Countdown')
+    resetGameStartScene()
   )
 
 disableAddingVehicles = ->
@@ -90,6 +90,13 @@ startAllVehicles = ->
 
 addEnemyVehicles = ->
   Crafty('Lane').trigger('addEnemyVehicle')
+
+resetGameStartScene = ->
+  Crafty('Lane').each( ->
+    if this.has('LaneReady')
+      this.removeComponent('LaneReady', false)
+  )
+  Crafty.e('Countdown')
 
 Crafty.c('Lane', {
   init: ->
