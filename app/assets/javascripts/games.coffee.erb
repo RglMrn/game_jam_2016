@@ -53,7 +53,7 @@ initGameVariables = ->
   crStage = $('#cr-stage')
 
 defineCraftyScenes = ->
-  Crafty.defineScene("game_start", () ->
+  Crafty.defineScene("game_start", ->
 
     Crafty.background(colorLightBrown)
 
@@ -92,19 +92,11 @@ Crafty.c('Lane', {
     this.h = crStage.height() - 10
     this.color(colorBrown)
 
-  events: {
+  events:
     'Click': (MouseEvent) ->
       if !this.has('LaneReady')
-        vehicleType = switch
-          when this.order == 1 then 'Uber'
-          when this.order == 2 then 'Metrobus'
-          when this.order == 3 then 'DiabloRojo'
-        Crafty.e('Vehicle')
-        .setType(vehicleType)
-        .place( this.x + (this.w / 2), this.h + this.y, true)
-        this.addComponent('LaneReady')
-        Crafty.log('Vehicle added in lane ' + this.order)
-  }
+        Crafty.e('VehicleSelection')
+          .onSelect(this, this.setVehicle)
 
   remove: ->
     Crafty.log('Lane was removed')
@@ -116,6 +108,14 @@ Crafty.c('Lane', {
   setOrder: (order) ->
     this.order = order
     return this
+
+  setVehicle: (vehicleType) ->
+    if !this.has('LaneReady')
+      Crafty.e('Vehicle')
+        .setType(vehicleType)
+        .place( this.x + (this.w / 2), this.h + this.y, true)
+      this.addComponent('LaneReady')
+      Crafty.log('Vehicle added in lane ' + this.order)
 })
 
 Crafty.c('Vehicle', {
@@ -179,7 +179,7 @@ Crafty.c('Countdown', {
     this.y = 5
     this.w = 100
     this.h = 20
-    this.time = 3
+    this.time = 10
     this.text('Tienes ' + this.time + 's')
     this.timer = setInterval(this.countdown, 1000)
 
@@ -201,4 +201,83 @@ Crafty.c('Countdown', {
     Crafty.log('interval')
     c.text('Tienes ' + c.time + 's')
     c.time -= 1
+})
+
+Crafty.c('VehicleSelection', {
+  required: "2D, Canvas, Color"
+
+  init: ->
+    this.selectVehicle = ''
+    this.x = crStage.width() / 6
+    this.y = 50
+    this.w = crStage.width() * 2 / 3
+    this.h = crStage.height() / 2
+    this.color(colorGray)
+    this.OptionsPositions = [
+      {
+        x: this.x + 0            + this.w * .33 / 2,
+        y: this.y + this.h / 2},
+      {
+        x: this.x + this.w * .33 + this.w * .33 / 2,
+        y: this.y + this.h / 2},
+      {
+        x: this.x + this.w * .66 + this.w * .33 / 2,
+        y: this.y + this.h / 2
+      }
+    ]
+
+    title = Crafty.e("2D, DOM, Text")
+    title.css({ "text-align": "center"})
+    title.text('¡TRANSPORTE PARA EL CARRIL 1!')
+    title.textColor("#FFFFFF")
+    title.w = 300
+    title.h = 100 #menuBackground.h / 5
+    title.x = this.x + this.w / 2 - title.w
+    title.y = this.y + 5
+
+
+    # Options
+    diabloRojoOption = Crafty.e("Vehicle, Button")
+    diabloRojoOption.vehicleSelectionContainer = this
+    diabloRojoOption.setType('DiabloRojo')
+    diabloRojoOption.place(this.OptionsPositions[0].x,
+        this.OptionsPositions[0].y + diabloRojoOption.h / 2,
+        true)
+    diabloRojoOption.bind("Click", (MouseEvent) ->
+      this.vehicleSelectionContainer.selectVehicle('DiabloRojo')
+    )
+
+    metroBusOption = Crafty.e("Vehicle, Button")
+    metroBusOption.vehicleSelectionContainer = this
+    metroBusOption.setType('Metrobus')
+    metroBusOption.place(this.OptionsPositions[1].x,
+        this.OptionsPositions[1].y + metroBusOption.h / 2,
+        true)
+    metroBusOption.bind("Click", (MouseEvent) ->
+      this.vehicleSelectionContainer.selectVehicle('Metrobus')
+    )
+
+    uberOption = Crafty.e("Vehicle, Button")
+    uberOption.vehicleSelectionContainer = this
+    uberOption.setType('Uber')
+    uberOption.place(this.OptionsPositions[2].x,
+        this.OptionsPositions[2].y + uberOption.h / 2,
+        true)
+    uberOption.bind("Click", (MouseEvent) ->
+      this.vehicleSelectionContainer.selectVehicle('Uber')
+    )
+
+    this.attach title, diabloRojoOption, metroBusOption, uberOption
+
+  remove: ->
+    Crafty.log('VehicleSelection was removed')
+
+  # Assign the function that will be called, passing the selected value, once a car is selected
+  onSelect: (laneObject, callback) ->
+    Crafty.log('Inside onSelect, callback : ' + callback)
+    this.selectVehicle = (vehicleType) ->
+      callback.apply(laneObject, [vehicleType])
+      Crafty.log(Crafty('VehicleSelection'))
+      Crafty('VehicleSelection').destroy()
+    return this
 })

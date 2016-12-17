@@ -8,8 +8,8 @@ default: &default
   adapter: postgresql
   pool: 5
   timeout: 5000
-  username: <%= Rails.application.secrets.database_username %>
-  password: <%= Rails.application.secrets.database_password %>
+  username: <%= ENV['RDS_USERNAME'] %> #<%= Rails.application.secrets.database_username %>
+  password: <%= ENV['RDS_PASSWORD'] %> #<%= Rails.application.secrets.database_password %>
 
 development:
   <<: *default
