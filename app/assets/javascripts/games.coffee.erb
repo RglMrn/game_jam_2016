@@ -20,6 +20,20 @@ assetsObj = {
       map: {
         bus_red_up_start: [0, 0]
       }
+    },
+    "<%= asset_path('bus_gray_up_206x583.png') %>": {
+      tile: 206,
+      tileh: 583,
+      map: {
+        bus_gray_up_start: [0, 0]
+      }
+    },
+    "<%= asset_path('car_white_up_476x960.png') %>": {
+      tile: 476,
+      tileh: 960,
+      map: {
+        car_white_up_start: [0, 0]
+      }
     }
   }
 }
@@ -139,16 +153,14 @@ Crafty.c('Vehicle', {
     return this
 
   setUberAttributes: ->
-    this.addComponent("Color")
-    this.color(colorBlack)
-    this.w = 30
-    this.h = 50
+    this.addComponent("car_white_up_start")
+    this.w = 120
+    this.h = 200
 
   setMetrobusAttributes: ->
-    this.addComponent("Color")
-    this.color(colorGray)
-    this.w = 35
-    this.h = 65
+    this.addComponent("bus_gray_up_start")
+    this.w = 90
+    this.h = 200
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
