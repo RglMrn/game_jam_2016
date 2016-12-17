@@ -108,8 +108,10 @@ Crafty.c('Lane', {
           .setLaneNumber(this.order)
 
     'addEnemyVehicle': ->
+      vehicleTypes = ['Metrobus', 'Uber', 'DiabloRojo']
+      randomVehicleType = vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)]
       Crafty.e('EnemyVehicle')
-      .setType('DiabloRojo')
+      .setType(randomVehicleType)
       .place( this.x + (this.w / 2), this.y, false)
   }
 
