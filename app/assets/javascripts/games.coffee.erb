@@ -75,6 +75,8 @@ defineCraftyScenes = ->
     .setOrder(3)
 
     resetGameStartScene()
+    Crafty.e('Score')
+    Crafty.e('EnemyScore')
   )
 
 disableAddingVehicles = ->
@@ -169,8 +171,10 @@ Crafty.c('Vehicle', {
       else
         if playerWins
           enemyVehicle.destroy()
+          Crafty('Score').addPoint()
         else
           this.destroy()
+          Crafty('EnemyScore').addPoint()
     )
 
   events: {
@@ -384,4 +388,50 @@ Crafty.c('VehicleSelection', {
     this.title.text('¡ ELIGE TU TRANSPORTE PARA EL CARRIL ' + laneNumber + ' !')
     this.title.x = this.x + this.w / 2 - this.title.w / 2
     return this
+})
+
+Crafty.c('Score', {
+  init: ->
+    this.addComponent("2D, DOM, Text")
+    this.text('Loading')
+    this.textColor("#FFFFFF")
+    this.x = crStage.width() / 2
+    this.y = 5
+    this.w = 300
+    this.h = 20
+    this.score = 0
+    this.text('Te llevaste: ' + this.score + ' vehículos!')
+
+  events: {
+  }
+
+  remove: ->
+    Crafty.log('Score was removed')
+
+  addPoint: ->
+    this.score += 1
+    this.text('Te llevaste: ' + this.score + ' vehículos!')
+})
+
+Crafty.c('EnemyScore', {
+  init: ->
+    this.addComponent("2D, DOM, Text")
+    this.text('Loading')
+    this.textColor("#FFFFFF")
+    this.x = crStage.width() / 2
+    this.y = 25
+    this.w = 300
+    this.h = 20
+    this.score = 0
+    this.text('Te arrollaron: ' + this.score + ' veces')
+
+  events: {
+  }
+
+  remove: ->
+    Crafty.log('Score was removed')
+
+  addPoint: ->
+    this.score += 1
+    this.text('Te arrollaron: ' + this.score + ' veces')
 })
