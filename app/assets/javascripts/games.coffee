@@ -86,9 +86,12 @@ Crafty.c('Vehicle', {
 
   events: {
     'EnterFrame': (eventData) ->
-      this.y -= this.speedIncrement * (eventData.dt / 1000);
-      if this.speedIncrement < this.speedCap
-        this.speedIncrement += this.speedIncrement
+      if this.y < Crafty('Lane').get(1).h / 2
+        this.destroy()
+      else
+        this.y -= this.speedIncrement * (eventData.dt / 1000);
+        if this.speedIncrement < this.speedCap
+          this.speedIncrement += this.speedIncrement
   }
 
   remove: ->
