@@ -95,8 +95,10 @@ Crafty.c('Lane', {
   events:
     'Click': (MouseEvent) ->
       if !this.has('LaneReady')
+        Crafty.log(this.order)
         Crafty.e('VehicleSelection')
           .onSelect(this, this.setVehicle)
+          .setLaneNumber(this.order)
 
   remove: ->
     Crafty.log('Lane was removed')
@@ -179,7 +181,7 @@ Crafty.c('Countdown', {
     this.y = 5
     this.w = 100
     this.h = 20
-    this.time = 10
+    this.time = 1000
     this.text('Tienes ' + this.time + 's')
     this.timer = setInterval(this.countdown, 1000)
 
@@ -208,6 +210,12 @@ Crafty.c('VehicleSelection', {
 
   init: ->
     this.selectVehicle = ''
+    this.title = Crafty.e("2D, Canvas, Text")
+    this.diabloRojoOption = Crafty.e("Vehicle, Button")
+    this.metroBusOption = Crafty.e("Vehicle, Button")
+    this.uberOption = Crafty.e("Vehicle, Button")
+    this.attach this.title, this.diabloRojoOption, this.metroBusOption, this.uberOption
+
     this.x = crStage.width() / 6
     this.y = 50
     this.w = crStage.width() * 2 / 3
@@ -226,48 +234,41 @@ Crafty.c('VehicleSelection', {
       }
     ]
 
-    title = Crafty.e("2D, DOM, Text")
-    title.css({ "text-align": "center"})
-    title.text('¡TRANSPORTE PARA EL CARRIL 1!')
-    title.textColor("#FFFFFF")
-    title.w = 300
-    title.h = 100 #menuBackground.h / 5
-    title.x = this.x + this.w / 2 - title.w
-    title.y = this.y + 5
+    this.title.textColor("#FFFFFF")
+    this.title.textFont({
+      size: '20px',
+      weight: 'bold'
+    })
+    this.title.y = this.y + 10
 
 
     # Options
-    diabloRojoOption = Crafty.e("Vehicle, Button")
-    diabloRojoOption.vehicleSelectionContainer = this
-    diabloRojoOption.setType('DiabloRojo')
-    diabloRojoOption.place(this.OptionsPositions[0].x,
-        this.OptionsPositions[0].y + diabloRojoOption.h / 2,
+    this.diabloRojoOption.vehicleSelectionContainer = this
+    this.diabloRojoOption.setType('DiabloRojo')
+    this.diabloRojoOption.place(this.OptionsPositions[0].x,
+        this.OptionsPositions[0].y + this.diabloRojoOption.h / 2,
         true)
-    diabloRojoOption.bind("Click", (MouseEvent) ->
+    this.diabloRojoOption.bind("Click", (MouseEvent) ->
       this.vehicleSelectionContainer.selectVehicle('DiabloRojo')
     )
 
-    metroBusOption = Crafty.e("Vehicle, Button")
-    metroBusOption.vehicleSelectionContainer = this
-    metroBusOption.setType('Metrobus')
-    metroBusOption.place(this.OptionsPositions[1].x,
-        this.OptionsPositions[1].y + metroBusOption.h / 2,
+    this.metroBusOption.vehicleSelectionContainer = this
+    this.metroBusOption.setType('Metrobus')
+    this.metroBusOption.place(this.OptionsPositions[1].x,
+        this.OptionsPositions[1].y + this.metroBusOption.h / 2,
         true)
-    metroBusOption.bind("Click", (MouseEvent) ->
+    this.metroBusOption.bind("Click", (MouseEvent) ->
       this.vehicleSelectionContainer.selectVehicle('Metrobus')
     )
 
-    uberOption = Crafty.e("Vehicle, Button")
-    uberOption.vehicleSelectionContainer = this
-    uberOption.setType('Uber')
-    uberOption.place(this.OptionsPositions[2].x,
-        this.OptionsPositions[2].y + uberOption.h / 2,
+    this.uberOption.vehicleSelectionContainer = this
+    this.uberOption.setType('Uber')
+    this.uberOption.place(this.OptionsPositions[2].x,
+        this.OptionsPositions[2].y + this.uberOption.h / 2,
         true)
-    uberOption.bind("Click", (MouseEvent) ->
+    this.uberOption.bind("Click", (MouseEvent) ->
       this.vehicleSelectionContainer.selectVehicle('Uber')
     )
-
-    this.attach title, diabloRojoOption, metroBusOption, uberOption
 
   remove: ->
     Crafty.log('VehicleSelection was removed')
@@ -279,5 +280,10 @@ Crafty.c('VehicleSelection', {
       callback.apply(laneObject, [vehicleType])
       Crafty.log(Crafty('VehicleSelection'))
       Crafty('VehicleSelection').destroy()
+    return this
+
+  setLaneNumber: (laneNumber) ->
+    this.title.text('¡ELIGE TU TRANSPORTE PARA EL CARRIL ' + laneNumber + '!')
+    this.title.x = this.x + this.w / 2 - this.title.w / 2
     return this
 })
