@@ -149,9 +149,28 @@ Crafty.c('Vehicle', {
     this.speedIncrement = SPEED_INCREMENT
     this.speedCap = SPEED_CAP
     this.onHit('EnemyVehicle', (obj) ->
-      this.destroy()
       enemyVehicle = Crafty(obj[0].obj.getId())
-      enemyVehicle.destroy()
+      playerType = this.vehicleType
+      enemyType = enemyVehicle.vehicleType
+      playerWins = false
+      bothLose = false
+      if playerType == 'Uber' and enemyType == 'Metrobus'
+        playerWins = true
+      else if playerType == 'Metrobus' and enemyType == 'DiabloRojo'
+        playerWins = true
+      else if playerType == 'DiabloRojo' and enemyType == 'Uber'
+        playerWins = true
+      else if playerType == enemyType
+        bothLose = true
+
+      if bothLose
+        enemyVehicle.destroy()
+        this.destroy()
+      else
+        if playerWins
+          enemyVehicle.destroy()
+        else
+          this.destroy()
     )
 
   events: {
@@ -182,16 +201,19 @@ Crafty.c('Vehicle', {
 
   setUberAttributes: ->
     this.addComponent("car_white_up_start")
+    this.vehicleType = 'Uber'
     this.w = Crafty('Lane').get(0).w * 0.425 #120
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
+    this.vehicleType = 'Metrobus'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
+    this.vehicleType = 'DiabloRojo'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 })
@@ -230,16 +252,19 @@ Crafty.c('EnemyVehicle', {
 
   setUberAttributes: ->
     this.addComponent("car_white_up_start")
+    this.vehicleType = 'Uber'
     this.w = Crafty('Lane').get(0).w * 0.425 #120
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
+    this.vehicleType = 'Metrobus'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
+    this.vehicleType = 'DiabloRojo'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
 })
@@ -274,7 +299,6 @@ Crafty.c('Countdown', {
       addEnemyVehicles()
       startAllVehicles()
       c.destroy()
-    Crafty.log('interval')
     c.text('Tienes ' + c.time + 's')
     c.time -= 1
 })
