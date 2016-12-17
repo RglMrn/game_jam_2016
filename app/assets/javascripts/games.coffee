@@ -3,6 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 colorBrown = '#795548'
+colorLightBrown = '#A1887F'
 colorLightBlue = '#3498db'
 
 crStage = ''
@@ -26,23 +27,21 @@ defineCraftyScenes = ->
     secondLaneXCoordinate = laneLeftMargin + (crStage.width() * .33)
     thirdLaneXCoordinate = laneLeftMargin + (crStage.width() * .66)
 
-    Crafty.background(colorLightBlue)
+    Crafty.background(colorLightBrown)
+
+    Crafty.e('Lane, 2D, Canvas, Color, Button')
+    .attr({x: firstLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
+    .color(colorBrown)
+    .bind('Click', lane1Clicked)
 
     Crafty.e('Lane, 2D, Canvas, Color')
-      .attr({x: firstLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: 200})
-      .color(colorBrown);
+    .attr({x: secondLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
+    .color(colorBrown)
 
     Crafty.e('Lane, 2D, Canvas, Color')
-    .attr({x: secondLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: 200})
-    .color(colorBrown);
-
-    Crafty.e('Lane, 2D, Canvas, Color')
-    .attr({x: thirdLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: 200})
-    .color(colorBrown);
-
-    player = Crafty.e("2D, Canvas, Color, Fourway")
-      .attr({x: 100, y: 100, w: 50, h: 50})
-      .color("blue")
-      .fourway(200)
+    .attr({x: thirdLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
+    .color(colorBrown)
   )
 
+  lane1Clicked = ->
+    alert('clicked', MouseEvent)
