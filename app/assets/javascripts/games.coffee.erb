@@ -12,6 +12,23 @@ colorBlack = '#000000'
 
 crStage = ''
 
+assetsObj = {
+  "sprites": {
+    "<%= asset_path('bus_red_up_206x583.png') %>": {
+      tile: 206,
+      tileh: 583,
+      map: {
+        bus_red_up_start: [0, 0]
+      }
+    }
+  }
+}
+
+Crafty.load(assetsObj, ->
+  Crafty.log('Assets loaded')
+)
+
+
 window.onload = () ->
   initGameVariables()
   Crafty.init(crStage.width())
@@ -88,8 +105,7 @@ Crafty.c('Lane', {
 
 Crafty.c('Vehicle', {
   init: ->
-    this.addComponent("2D, Canvas, Color")
-    this.color(colorBrown)
+    this.addComponent("2D, Canvas")
     this.speedIncrement = 50
     this.speedCap = 500
 
@@ -123,17 +139,19 @@ Crafty.c('Vehicle', {
     return this
 
   setUberAttributes: ->
+    this.addComponent("Color")
     this.color(colorBlack)
     this.w = 30
     this.h = 50
 
   setMetrobusAttributes: ->
+    this.addComponent("Color")
     this.color(colorGray)
     this.w = 35
     this.h = 65
 
   setDiabloRojoAttributes: ->
-    this.color(colorRed)
-    this.w = 35
-    this.h = 60
+    this.addComponent("bus_red_up_start")
+    this.w = 90
+    this.h = 200
 })
