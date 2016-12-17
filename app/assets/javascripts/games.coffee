@@ -60,6 +60,7 @@ Crafty.c('Lane', {
       Crafty.e('Vehicle')
       .setType(vehicleType)
       .place( this.x + (this.w / 2), this.h + this.y, true)
+      Crafty.log('Vehicle added in lane ' + this.order)
   }
 
   remove: ->
