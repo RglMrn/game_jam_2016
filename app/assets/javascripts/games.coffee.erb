@@ -12,6 +12,9 @@ colorBlack = '#000000'
 
 crStage = ''
 
+SPEED_INCREMENT = 75
+SPEED_CAP = 800
+
 assetsObj = {
   "sprites": {
     "<%= asset_path('bus_red_up_206x583.png') %>": {
@@ -82,6 +85,7 @@ disableAddingVehicles = ->
 
 startAllVehicles = ->
   Crafty('Vehicle').trigger('StartRunning')
+  Crafty('EnemyVehicle').trigger('StartRunning')
 
 addEnemyVehicles = ->
   Crafty('Lane').trigger('addEnemyVehicle')
@@ -104,7 +108,7 @@ Crafty.c('Lane', {
           .setLaneNumber(this.order)
 
     'addEnemyVehicle': ->
-      Crafty.e('Vehicle')
+      Crafty.e('EnemyVehicle')
       .setType('DiabloRojo')
       .place( this.x + (this.w / 2), this.y, false)
   }
@@ -132,8 +136,8 @@ Crafty.c('Lane', {
 Crafty.c('Vehicle', {
   init: ->
     this.addComponent("2D, Canvas")
-    this.speedIncrement = 75
-    this.speedCap = 800
+    this.speedIncrement = SPEED_INCREMENT
+    this.speedCap = SPEED_CAP
 
   events: {
     'StartRunning': ->
@@ -142,6 +146,57 @@ Crafty.c('Vehicle', {
           this.destroy()
         else
           this.y -= this.speedIncrement * (eventData.dt / 1000);
+          if this.speedIncrement < this.speedCap
+            this.speedIncrement += this.speedIncrement
+      )
+  }
+
+  remove: ->
+    Crafty.log('Vehicle was removed')
+
+  place: (x, y, subtractVehicleHeight) ->
+    this.x = x - (this.w / 2)
+    this.y = y
+    if subtractVehicleHeight
+      this.y -= this.h
+    return this
+
+  setType: (vehicleType) ->
+    switch vehicleType
+      when 'Uber' then this.setUberAttributes()
+      when 'Metrobus' then this.setMetrobusAttributes()
+      when 'DiabloRojo' then this.setDiabloRojoAttributes()
+    return this
+
+  setUberAttributes: ->
+    this.addComponent("car_white_up_start")
+    this.w = 120
+    this.h = 200
+
+  setMetrobusAttributes: ->
+    this.addComponent("bus_gray_up_start")
+    this.w = 90
+    this.h = 200
+
+  setDiabloRojoAttributes: ->
+    this.addComponent("bus_red_up_start")
+    this.w = 90
+    this.h = 200
+})
+
+Crafty.c('EnemyVehicle', {
+  init: ->
+    this.addComponent("2D, Canvas")
+    this.speedIncrement = SPEED_INCREMENT
+    this.speedCap = SPEED_CAP
+
+  events: {
+    'StartRunning': ->
+      this.bind('EnterFrame', (eventData) ->
+        if this.y > (Crafty('Lane').get(1).h / 2) - this.h
+          this.destroy()
+        else
+          this.y += this.speedIncrement * (eventData.dt / 1000);
           if this.speedIncrement < this.speedCap
             this.speedIncrement += this.speedIncrement
       )
