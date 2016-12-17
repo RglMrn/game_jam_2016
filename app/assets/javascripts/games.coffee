@@ -59,7 +59,7 @@ Crafty.c('Lane', {
         when this.order == 3 then 'DiabloRojo'
       Crafty.e('Vehicle')
       .setType(vehicleType)
-      .place( this.x + (this.w / 2), this.y)
+      .place( this.x + (this.w / 2), this.h + this.y, true)
   }
 
   remove: ->
@@ -85,9 +85,11 @@ Crafty.c('Vehicle', {
   remove: ->
     Crafty.log('Vehicle was removed')
 
-  place: (x, y) ->
+  place: (x, y, subtractVehicleHeight) ->
     this.x = x - (this.w / 2)
     this.y = y
+    if subtractVehicleHeight
+      this.y -= this.h
     return this
 
   setType: (vehicleType) ->
