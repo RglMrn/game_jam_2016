@@ -53,14 +53,16 @@ Crafty.c('Lane', {
 
   events: {
     'Click': (MouseEvent) ->
-      vehicleType = switch
-        when this.order == 1 then 'Uber'
-        when this.order == 2 then 'Metrobus'
-        when this.order == 3 then 'DiabloRojo'
-      Crafty.e('Vehicle')
-      .setType(vehicleType)
-      .place( this.x + (this.w / 2), this.h + this.y, true)
-      Crafty.log('Vehicle added in lane ' + this.order)
+      if !this.has('VehicleAdded')
+        vehicleType = switch
+          when this.order == 1 then 'Uber'
+          when this.order == 2 then 'Metrobus'
+          when this.order == 3 then 'DiabloRojo'
+        Crafty.e('Vehicle')
+        .setType(vehicleType)
+        .place( this.x + (this.w / 2), this.h + this.y, true)
+        this.addComponent('VehicleAdded');
+        Crafty.log('Vehicle added in lane ' + this.order)
   }
 
   remove: ->
