@@ -5,6 +5,10 @@
 colorBrown = '#795548'
 colorLightBrown = '#A1887F'
 colorLightBlue = '#3498db'
+colorGray = '#95a5a6'
+colorRed = '#c0392b'
+colorWhite = '#FFFFFF'
+colorBlack = '#000000'
 
 crStage = ''
 
@@ -19,29 +23,77 @@ initGameVariables = ->
 
 defineCraftyScenes = ->
   Crafty.defineScene("game_start", () ->
-    laneLeftMargin = 5
-    laneTopMargin = 5
-    laneWidth = crStage.width() / 3 - 10
-    laneHeight = crStage.height() - 10
-    firstLaneXCoordinate = laneLeftMargin
-    secondLaneXCoordinate = laneLeftMargin + (crStage.width() * .33)
-    thirdLaneXCoordinate = laneLeftMargin + (crStage.width() * .66)
 
     Crafty.background(colorLightBrown)
 
-    Crafty.e('Lane, 2D, Canvas, Color, Button')
-    .attr({x: firstLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
-    .color(colorBrown)
-    .bind('Click', lane1Clicked)
+    leftMargin = 5
 
-    Crafty.e('Lane, 2D, Canvas, Color')
-    .attr({x: secondLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
-    .color(colorBrown)
+    Crafty.e('Lane')
+    .setX(leftMargin)
 
-    Crafty.e('Lane, 2D, Canvas, Color')
-    .attr({x: thirdLaneXCoordinate, y: laneTopMargin, w: laneWidth, h: laneHeight})
-    .color(colorBrown)
+    Crafty.e('Lane')
+    .setX(leftMargin + (crStage.width() * .33))
+
+    Crafty.e('Lane')
+    .setX(leftMargin + (crStage.width() * .66))
   )
 
-  lane1Clicked = ->
-    alert('clicked', MouseEvent)
+
+Crafty.c('Lane', {
+  init: ->
+    this.addComponent("2D, Canvas, Color, Button")
+    this.y = 5
+    this.x = 5
+    this.w = crStage.width() / 3 - 10
+    this.h = crStage.height() - 10
+    this.color(colorBrown)
+
+  events: {
+    'Click': (MouseEvent) ->
+      Crafty.e('Vehicle')
+      .place(this.x, this.y)
+      .setType('Uber')
+  }
+
+  remove: ->
+    Crafty.log('Lane was removed')
+
+  setX: (x) ->
+    this.x = x
+    return this
+})
+
+Crafty.c('Vehicle', {
+  init: ->
+    this.addComponent("2D, Canvas, Color")
+    this.w = 30
+    this.h = 30
+    this.color(colorBrown)
+
+  events: {
+  }
+
+  remove: ->
+    Crafty.log('Vehicle was removed')
+
+  place: (x, y) ->
+    this.x = x
+    this.y = y
+    return this
+
+  setType: (vehicleType) ->
+    switch vehicleType
+      when 'Uber' then this.setUberAttributes()
+      when 'Metrobus' then this.setMetrobusAttributes()
+      when 'DiabloRojo' then this.setDiabloRojoAttributes()
+    return this
+
+  setUberAttributes: ->
+    this.color(colorBlack)
+
+  setMetrobusAttributes: ->
+    this.color(colorGray)
+
+  setDiabloRojoAttributes: ->
+    this.color(colorRed)
+})
