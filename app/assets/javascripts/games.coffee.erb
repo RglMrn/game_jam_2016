@@ -83,6 +83,9 @@ disableAddingVehicles = ->
 startAllVehicles = ->
   Crafty('Vehicle').trigger('StartRunning')
 
+addEnemyVehicles = ->
+  Crafty('Lane').trigger('addEnemyVehicle')
+
 Crafty.c('Lane', {
   init: ->
     this.addComponent("2D, Canvas, Color, Button")
@@ -92,13 +95,19 @@ Crafty.c('Lane', {
     this.h = crStage.height() - 10
     this.color(colorBrown)
 
-  events:
+  events: {
     'Click': (MouseEvent) ->
       if !this.has('LaneReady')
         Crafty.log(this.order)
         Crafty.e('VehicleSelection')
           .onSelect(this, this.setVehicle)
           .setLaneNumber(this.order)
+
+    'addEnemyVehicle': ->
+      Crafty.e('Vehicle')
+      .setType('DiabloRojo')
+      .place( this.x + (this.w / 2), this.y, false)
+  }
 
   remove: ->
     Crafty.log('Lane was removed')
@@ -181,7 +190,7 @@ Crafty.c('Countdown', {
     this.y = 5
     this.w = 100
     this.h = 20
-    this.time = 1000
+    this.time = 3
     this.text('Tienes ' + this.time + 's')
     this.timer = setInterval(this.countdown, 1000)
 
@@ -198,6 +207,7 @@ Crafty.c('Countdown', {
     if c.time <= 0
       clearInterval(c.timer)
       disableAddingVehicles()
+      addEnemyVehicles()
       startAllVehicles()
       c.destroy()
     Crafty.log('interval')
