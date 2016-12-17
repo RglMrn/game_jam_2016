@@ -71,12 +71,13 @@ defineCraftyScenes = ->
     .setX(leftMargin + (crStage.width() * .66))
     .setOrder(3)
 
-    Crafty.e('2D, DOM, Color, Button')
-    .attr({x: 10, y: 10, w: 50, h: 50})
-    .color(colorLightBlue)
-    .bind('Click', (MouseEvent) ->
-      startAllVehicles()
-    )
+    Crafty.e('Countdown')
+  )
+
+disableAddingVehicles = ->
+  Crafty('Lane').each( ->
+    if !this.has('LaneReady')
+      this.addComponent('LaneReady')
   )
 
 startAllVehicles = ->
@@ -93,7 +94,7 @@ Crafty.c('Lane', {
 
   events: {
     'Click': (MouseEvent) ->
-      if !this.has('VehicleAdded')
+      if !this.has('LaneReady')
         vehicleType = switch
           when this.order == 1 then 'Uber'
           when this.order == 2 then 'Metrobus'
@@ -101,7 +102,7 @@ Crafty.c('Lane', {
         Crafty.e('Vehicle')
         .setType(vehicleType)
         .place( this.x + (this.w / 2), this.h + this.y, true)
-        this.addComponent('VehicleAdded');
+        this.addComponent('LaneReady')
         Crafty.log('Vehicle added in lane ' + this.order)
   }
 
@@ -166,4 +167,38 @@ Crafty.c('Vehicle', {
     this.addComponent("bus_red_up_start")
     this.w = 90
     this.h = 200
+})
+
+Crafty.c('Countdown', {
+  init: ->
+    this.addComponent("2D, DOM, Text")
+    this.css({ "text-align": "center"})
+    this.text('Loading')
+    this.textColor("#FFFFFF")
+    this.x = 5
+    this.y = 5
+    this.w = 100
+    this.h = 20
+    this.time = 3
+    this.text('Tienes ' + this.time + 's')
+    this.timer = setInterval(this.countdown, 1000)
+
+  events: {
+    #'EnterFrame': ->
+    #  this.y -= this.speedIncrement * (eventData.dt / 1000)
+  }
+
+  remove: ->
+    Crafty.log('Countdown was removed')
+
+  countdown: () ->
+    c = Crafty('Countdown')
+    if c.time <= 0
+      clearInterval(c.timer)
+      disableAddingVehicles()
+      startAllVehicles()
+      c.destroy()
+    Crafty.log('interval')
+    c.text('Tienes ' + c.time + 's')
+    c.time -= 1
 })
