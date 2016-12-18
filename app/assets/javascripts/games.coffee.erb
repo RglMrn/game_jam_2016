@@ -90,9 +90,6 @@ defineCraftyScenes = ->
       .setCheckHitsWith('EnemyVehicle')
       .setScoreTracker('EnemyScore')
 
-#    resetGameStartScene()
-#    Crafty.e('Score')
-#    Crafty.e('EnemyScore')
     Crafty.e('Countdown')
   )
 
@@ -109,6 +106,12 @@ startAllVehicles = ->
 
 addEnemyVehicles = ->
   Crafty('Lane').trigger('addEnemyVehicle')
+
+allVehiclesDestroyed = ->
+  allDestroyed = false
+  if Crafty('Vehicle, EnemyVehicle').length == 0
+    allDestroyed = true
+  return allDestroyed
 
 resetGameStartScene = ->
   Crafty('Lane').each( ->
@@ -171,17 +174,23 @@ Crafty.c('EndOfLane', {
     this.w = crStage.width()
     this.h = 1
     this.scoreTracker = ''
+    this.checksHitsWith = ''
 
   events: {
     'HitOn': (hitData) ->
       self = this
       $.each(hitData, (key, value) ->
+        value.obj.destroy()
         Crafty(self.scoreTracker).addPoint()
       )
+
+      if allVehiclesDestroyed()
+        Crafty.enterScene("game_start")
   }
 
   setCheckHitsWith: (componentsList) ->
-    this.checkHits(componentsList)
+    this.checksHitsWith = componentsList
+    this.checkHits(this.checksHitsWith)
     return this
 
   setScoreTracker: (componentList) ->
@@ -355,6 +364,7 @@ Crafty.c('Countdown', {
       addEnemyVehicles()
       startAllVehicles()
       c.destroy()
+
     c.text('Tienes ' + c.time + 's')
     c.time -= 1
 })
