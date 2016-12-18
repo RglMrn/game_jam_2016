@@ -11,6 +11,8 @@ colorWhite = '#FFFFFF'
 colorBlack = '#000000'
 
 crStage = ''
+ownScore = ''
+enemyScore = ''
 
 SPEED_INCREMENT = 75
 SPEED_CAP = 800
@@ -45,15 +47,19 @@ Crafty.load(assetsObj, ->
   Crafty.log('Assets loaded')
 )
 
-
 window.onload = () ->
   initGameVariables()
   Crafty.init(crStage.width())
+  initScores()
   defineCraftyScenes()
   Crafty.enterScene("game_start")
 
 initGameVariables = ->
   crStage = $('#cr-stage')
+
+initScores = ->
+  this.ownScore = Crafty.e('Score, Persist')
+  this.enemyScore = Crafty.e('EnemyScore, Persist')
 
 defineCraftyScenes = ->
   Crafty.defineScene("game_start", ->
@@ -63,20 +69,31 @@ defineCraftyScenes = ->
     leftMargin = 5
 
     Crafty.e('Lane')
-    .setX(leftMargin)
-    .setOrder(1)
+      .setX(leftMargin)
+      .setOrder(1)
 
     Crafty.e('Lane')
-    .setX(leftMargin + (crStage.width() * .33))
-    .setOrder(2)
+      .setX(leftMargin + (crStage.width() * .33))
+      .setOrder(2)
 
     Crafty.e('Lane')
-    .setX(leftMargin + (crStage.width() * .66))
-    .setOrder(3)
+      .setX(leftMargin + (crStage.width() * .66))
+      .setOrder(3)
 
-    resetGameStartScene()
-    Crafty.e('Score')
-    Crafty.e('EnemyScore')
+    Crafty.e('EndOfLane')
+      .setY(0)
+      .setCheckHitsWith('Vehicle')
+      .setScoreTracker('Score')
+
+    Crafty.e('EndOfLane')
+      .setY(crStage.height())
+      .setCheckHitsWith('EnemyVehicle')
+      .setScoreTracker('EnemyScore')
+
+#    resetGameStartScene()
+#    Crafty.e('Score')
+#    Crafty.e('EnemyScore')
+    Crafty.e('Countdown')
   )
 
 disableAddingVehicles = ->
@@ -112,7 +129,6 @@ Crafty.c('Lane', {
   events: {
     'Click': (MouseEvent) ->
       if !this.has('LaneReady')
-        Crafty.log(this.order)
         Crafty.e('VehicleSelection')
           .onSelect(this, this.setVehicle)
           .setLaneNumber(this.order)
@@ -143,6 +159,38 @@ Crafty.c('Lane', {
         .place( this.x + (this.w / 2), this.h + this.y, true)
       this.addComponent('LaneReady')
       Crafty.log('Vehicle added in lane ' + this.order)
+    return this
+})
+
+Crafty.c('EndOfLane', {
+  required: '2D, Canvas, Collision'
+
+  init: ->
+    this.x = 0
+    this.y = ''
+    this.w = crStage.width()
+    this.h = 1
+    this.scoreTracker = ''
+
+  events: {
+    'HitOn': (hitData) ->
+      self = this
+      $.each(hitData, (key, value) ->
+        Crafty(self.scoreTracker).addPoint()
+      )
+  }
+
+  setCheckHitsWith: (componentsList) ->
+    this.checkHits(componentsList)
+    return this
+
+  setScoreTracker: (componentList) ->
+    this.scoreTracker = componentList
+    return this
+
+  setY: (y) ->
+    this.y = y
+    return this
 })
 
 Crafty.c('Vehicle', {
@@ -171,10 +219,8 @@ Crafty.c('Vehicle', {
       else
         if playerWins
           enemyVehicle.destroy()
-          Crafty('Score').addPoint()
         else
           this.destroy()
-          Crafty('EnemyScore').addPoint()
     )
 
   events: {
@@ -208,18 +254,21 @@ Crafty.c('Vehicle', {
     this.vehicleType = 'Uber'
     this.w = Crafty('Lane').get(0).w * 0.425 #120
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
     this.vehicleType = 'Metrobus'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
     this.vehicleType = 'DiabloRojo'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 })
 
 Crafty.c('EnemyVehicle', {
@@ -259,18 +308,21 @@ Crafty.c('EnemyVehicle', {
     this.vehicleType = 'Uber'
     this.w = Crafty('Lane').get(0).w * 0.425 #120
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 
   setMetrobusAttributes: ->
     this.addComponent("bus_gray_up_start")
     this.vehicleType = 'Metrobus'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 
   setDiabloRojoAttributes: ->
     this.addComponent("bus_red_up_start")
     this.vehicleType = 'DiabloRojo'
     this.w = Crafty('Lane').get(0).w * 0.33 #90
     this.h = Crafty('Lane').get(0).w * 0.8 #200
+    return this
 })
 
 Crafty.c('Countdown', {
@@ -283,7 +335,7 @@ Crafty.c('Countdown', {
     this.y = 5
     this.w = 100
     this.h = 20
-    this.time = 10
+    this.time = 5
     this.text('Tienes ' + this.time + 's')
     this.timer = setInterval(this.countdown, 1000)
 
@@ -377,10 +429,8 @@ Crafty.c('VehicleSelection', {
 
   # Assign the function that will be called, passing the selected value, once a car is selected
   onSelect: (laneObject, callback) ->
-    Crafty.log('Inside onSelect, callback : ' + callback)
     this.selectVehicle = (vehicleType) ->
       callback.apply(laneObject, [vehicleType])
-      Crafty.log(Crafty('VehicleSelection'))
       Crafty('VehicleSelection').destroy()
     return this
 
